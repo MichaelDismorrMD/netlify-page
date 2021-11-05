@@ -1,13 +1,14 @@
 ---
 title: My first post
-author: Michael Persson
+authors: 
+  - admin
 date: '2021-11-03'
 slug: my-first-post
 categories: []
 tags: []
 subtitle: ''
 summary: ''
-authors: []
+#authors: []
 lastmod: '2021-11-03T13:49:55+01:00'
 featured: no
 image:
