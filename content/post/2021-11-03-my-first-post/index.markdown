@@ -17,3 +17,6 @@ image:
   preview_only: no
 projects: []
 ---
+
+
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" width="672" />

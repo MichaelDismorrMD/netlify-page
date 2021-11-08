@@ -20,7 +20,7 @@ interests:
 - R-programming
 organizations:
 - name: Karolinska Institutet
-  url: https://www.ki.edu/
+  url: https://www.ki.se/
 role: Medical doctor, PhD Candidate in cardiothoracic surgery
 social:
 - icon: university
@@ -40,7 +40,7 @@ social:
   link: https://github.com/MichaelDismorrMD
 - icon: linkedin
   icon_pack: fab
-  link: www.linkedin.com/in/MichaelDismorr
+  link: https://www.linkedin.com/in/MichaelDismorr
 superuser: true
 title: Michael Dismorr, MD
 ---
