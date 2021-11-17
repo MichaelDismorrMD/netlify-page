@@ -1,6 +1,5 @@
 ---
-bio: My research interests include distributed robotics, mobile computing and programmable
-  matter.
+bio: My research interests include epidemiology, survival analysis, and R programming.
 education:
   courses:
   - course: PhD in Epidemiology in Cardiothoracic research

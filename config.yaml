@@ -62,7 +62,7 @@ markup:
   _merge: deep
   goldmark:
     renderer:
-      unsafe: true  
+      unsafe: true
 related:
   threshold: 80
   includeNewer: true
