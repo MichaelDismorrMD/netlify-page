@@ -130,7 +130,8 @@ lev_5fu <- predict(poisson_fit,
                    newdata = data.frame(rx = "Lev+5FU", time = 36525), 
                    type = "link", se.fit = T)
 
-as_tibble(lev_5fu) %>% summarise(IR = exp(fit), 
+as_tibble(lev_5fu) %>% summarise(Treatment = "Lev+5FU", 
+                                 IR = exp(fit), 
                                  lower = exp(fit - (1.96 * se.fit)), 
                                  upper = exp(fit + (1.96 * se.fit)))
 

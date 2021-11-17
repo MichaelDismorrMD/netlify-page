@@ -179,13 +179,14 @@ tidy(poisson_fit, exponentiate = T, conf.int = T)</code></pre>
                    newdata = data.frame(rx = &quot;Lev+5FU&quot;, time = 36525), 
                    type = &quot;link&quot;, se.fit = T)
 
-as_tibble(lev_5fu) %&gt;% summarise(IR = exp(fit), 
+as_tibble(lev_5fu) %&gt;% summarise(Treatment = &quot;Lev+5FU&quot;, 
+                                 IR = exp(fit), 
                                  lower = exp(fit - (1.96 * se.fit)), 
                                  upper = exp(fit + (1.96 * se.fit)))</code></pre>
-<pre><code>## # A tibble: 1 x 3
-##      IR lower upper
-##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1  8.22  6.88  9.80</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   Treatment    IR lower upper
+##   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Lev+5FU    8.22  6.88  9.80</code></pre>
 <p>Here, the confidence interval needs to be calculated on the <span class="math inline">\(\log\)</span> scale and then exponentiated back. This will cause the confidence interval to not be centered around the estimate.</p>
 <p>A poisson model is actually modeling <span class="math inline">\(\log\text{incidence rates (ratios)}\)</span> when we use the time variable as an offset. Therefore, we can include covariates in the model to be accounted for, such as age and sex.</p>
 </div>
