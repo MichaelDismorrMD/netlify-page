@@ -165,7 +165,8 @@ std_sum <- summary(std_fit, CI.type = "log")
 
 std_sum[["est.table"]] %>% 
     as_tibble(rownames = "rx") %>% 
-    transmute(IR = Estimate, 
+    transmute(Treatment = rx, 
+              IR = Estimate, 
               lower = `lower 0.95`, 
               upper = `upper 0.95`)
 

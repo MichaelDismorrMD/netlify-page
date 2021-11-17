@@ -215,15 +215,16 @@ std_sum &lt;- summary(std_fit, CI.type = &quot;log&quot;)
 
 std_sum[[&quot;est.table&quot;]] %&gt;% 
     as_tibble(rownames = &quot;rx&quot;) %&gt;% 
-    transmute(IR = Estimate, 
+    transmute(Treatment = rx, 
+              IR = Estimate, 
               lower = `lower 0.95`, 
               upper = `upper 0.95`)</code></pre>
-<pre><code>## # A tibble: 3 x 3
-##      IR lower upper
-##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 12.2  10.2  14.7 
-## 2 11.8  10.1  13.8 
-## 3  8.25  6.99  9.73</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   Treatment    IR lower upper
+##   &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Obs       12.2  10.2  14.7 
+## 2 Lev       11.8  10.1  13.8 
+## 3 Lev+5FU    8.25  6.99  9.73</code></pre>
 <p>The numbers are identical to the ones obtained from the <code>age_sex_adjust()</code> function, which is logical since we did the same thing as the function does.<br />
 A few finishing notes. Here I included age as a quadratic term, and as an interaction with exposure. These are modeling decisions one will have to take, however the model could have been only a main effects model such as:<br />
 <br>
