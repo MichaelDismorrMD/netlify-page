@@ -15,8 +15,8 @@ font_size: L
 site_type: Person
 local_business_type: ''
 org_name: ''
-description: ''
-twitter: ''
+description: "Michael Dismorr's site covering topics on epidemiology and statistics in R, survival analysis and regression standardization"
+twitter: 'MichaelDismorr'
 
 # Contact (edit or remove options as required)
 
@@ -147,9 +147,9 @@ map:
   api_key: ''
   zoom: 15
 marketing:
-  google_analytics: ''
+  google_analytics: 'G-DTSF10PW7B'
   google_tag_manager: ''
-  google_site_verification: ''
+  google_site_verification: 'gYErmSHe22i-yQr1IZImeiANk941zthU4gTVNeHMm04'
   baidu_site_verification: ''
   baidu_tongji: ''
 cms:
