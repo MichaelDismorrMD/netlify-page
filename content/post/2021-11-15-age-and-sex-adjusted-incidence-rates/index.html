@@ -124,10 +124,9 @@ library(broom)</code></pre>
 </tbody>
 </table>
 <p>OK, so now that we understand the data, let’s start calculating crude incidence rates for death among the different treatment groups:</p>
-<pre class="r"><code># load the colon dataset
-data(colon, package = &quot;survival&quot;) </code></pre>
-<pre><code>## Warning in data(colon, package = &quot;survival&quot;): data set &#39;colon&#39; not found</code></pre>
-<pre class="r"><code># Only keep records related to the death outcome
+<pre class="r"><code># Using the colon dataset from the survival package
+
+# Only keep records related to the death outcome
 colon_death &lt;- colon %&gt;% dplyr::filter(etype == 2) 
 
 # Time is divided by 365.25/100 to get the time in days variable 

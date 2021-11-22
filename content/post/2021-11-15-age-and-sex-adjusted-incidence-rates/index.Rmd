@@ -76,8 +76,7 @@ etype | event type --- 1 = recurrence, 2 = death
 OK, so now that we understand the data, let's start calculating crude incidence rates for death among the different treatment groups:    
 
 ```{r message = FALSE}
-# load the colon dataset
-data(colon, package = "survival") 
+# Using the colon dataset from the survival package
 
 # Only keep records related to the death outcome
 colon_death <- colon %>% dplyr::filter(etype == 2) 
