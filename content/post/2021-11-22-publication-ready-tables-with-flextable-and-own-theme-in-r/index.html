@@ -1,0 +1,106 @@
+---
+title: Publication-ready tables with flextable and own theme in R
+date: '2021-11-22'
+draft: true
+slug: publication-ready-tables-with-flextable-and-own-theme-in-r
+categories: []
+tags: [R, publication-ready, tableone, flextable]
+subtitle: ''
+summary: "In this post, I will show you how I make my tables publication ready using a combination of the `flextable` package and a function I've written to customize them according to my default, or theme if you will. This will minimize the need to edit in word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the `tableone` package to show how my `customtab()` function can be used to export Table 1.  "
+authors: [admin]
+lastmod: '2021-11-22T22:05:20+01:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>In this post, I will show you how I make my tables publication ready using a combination of the <code>flextable</code> package and a function I’ve written to customize them according to my default, or theme if you will. This will minimize the need to edit in word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the <code>tableone</code> package to show how my <code>customtab()</code> function can be used to export Table 1.</p>
+<p>The <a href="https://cran.r-project.org/package=flextable"><code>flextable</code></a> package is a great package to generate word tables from R output. Together with the <a href="https://cran.r-project.org/package=officer"><code>officer</code></a> package from the same creator, it allows you to make most of the customization needed immediately in R, and thus let’s you skip this potentially annoying step in MS Word. The <a href="https://cran.r-project.org/package=tableone"><code>tableone</code></a> package is a great package for, you guessed it, generating Table 1s. It allows for p-value calculations, SMDs, and generally just the output that you need.</p>
+<p>For demonstration, I will use the gbsg dataset from the from the <code>survival</code> package. If you just want to try out the <code>customtab()</code> function, it can be downloaded <a href="customtab.R">here</a>.</p>
+<p>OK, let’s begin!</p>
+<pre class="r"><code>library(survival) # only needed for the dataset in this example
+library(dplyr) # to modify the needed dataframe
+library(flextable)
+library(officer)
+library(forcats)</code></pre>
+<p>Load the dataset:</p>
+<pre class="r"><code>breast &lt;- survival::gbsg</code></pre>
+<p>Running <code>?survival::gbsg</code> gives:</p>
+<blockquote>
+<p>The gbsg data set contains patient records from a 1984 — 1989 trial conducted by the German Breast Cancer Study Group (GBSG) of 720 patients with node positive cancer…</p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pid</td>
+<td>Patiend ID</td>
+</tr>
+<tr class="even">
+<td>age</td>
+<td>Age in years</td>
+</tr>
+<tr class="odd">
+<td>meno</td>
+<td>Menopausal staus - 0 = premenopaus, 1 = postmenopaus</td>
+</tr>
+<tr class="even">
+<td>size</td>
+<td>tumor size</td>
+</tr>
+<tr class="odd">
+<td>grade</td>
+<td>tumor grade</td>
+</tr>
+<tr class="even">
+<td>nodes</td>
+<td>number of positive lymph nodes</td>
+</tr>
+<tr class="odd">
+<td>pgr</td>
+<td>progesterone receptors (fmol/L)</td>
+</tr>
+<tr class="even">
+<td>er</td>
+<td>estrogen receptors (fmol/L)</td>
+</tr>
+<tr class="odd">
+<td>hormon</td>
+<td>hormone therapy - 0 = no, 1 = yes</td>
+</tr>
+<tr class="even">
+<td>rfstime</td>
+<td>recurrence free survival time in days</td>
+</tr>
+<tr class="odd">
+<td>status</td>
+<td>0 = alive without recurrence, 1 = recurrence or death</td>
+</tr>
+</tbody>
+</table>
+<p>Select variables included in Table 1.</p>
+<pre class="r"><code>variables &lt;- names(breast)
+
+breast &lt;- breast %&gt;% select(all_of(variables)) %&gt;% select(-pid, -rfstime, -status)</code></pre>
+<p>Rename the variables as they should appear in the table</p>
+<pre class="r"><code>breast &lt;- breast %&gt;% rename(`Age, years (mean (SD))` = age, 
+                             Postmenopausal = meno, 
+                             `Tumor size, mm (mean (SD)` = size, 
+                             `Tumor grade` = grade, 
+                             `Positive lymph nodes, (n)` = nodes, 
+                             `Progesterone receptors, fmol/L (mean (SD))` = pgr, 
+                             `Estrogen receptors, fmol/L (mean (SD))` = er, 
+                             `Hormone treatment` = hormon)</code></pre>
+<p>Relabel hormon variable</p>
+<pre class="r"><code>breast$`Hormone treatment` &lt;- as_factor(breast$`Hormone treatment`) %&gt;% fct_recode(Treated = &quot;1&quot;, Placebo = &quot;0&quot;)</code></pre>

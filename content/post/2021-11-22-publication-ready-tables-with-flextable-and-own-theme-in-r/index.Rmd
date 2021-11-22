@@ -1,0 +1,88 @@
+---
+title: Publication-ready tables with flextable and own theme in R
+date: '2021-11-22'
+draft: true
+slug: publication-ready-tables-with-flextable-and-own-theme-in-r
+categories: []
+tags: [R, publication-ready, tableone, flextable]
+subtitle: ''
+summary: "In this post, I will show you how I make my tables publication ready using a combination of the `flextable` package and a function I've written to customize them according to my default, or theme if you will. This will minimize the need to edit in word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the `tableone` package to show how my `customtab()` function can be used to export Table 1.  "
+authors: [admin]
+lastmod: '2021-11-22T22:05:20+01:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+In this post, I will show you how I make my tables publication ready using a combination of the `flextable` package and a function I've written to customize them according to my default, or theme if you will. This will minimize the need to edit in word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the `tableone` package to show how my `customtab()` function can be used to export Table 1.   
+
+The [`flextable`](https://cran.r-project.org/package=flextable) package is a great package to generate word tables from R output. Together with the [`officer`](https://cran.r-project.org/package=officer) package from the same creator, it allows you to make most of the customization needed immediately in R, and thus let's you skip this potentially annoying step in MS Word. The [`tableone`](https://cran.r-project.org/package=tableone) package is a great package for, you guessed it, generating Table 1s. It allows for p-value calculations, SMDs, and generally just the output that you need. 
+
+For demonstration, I will use the gbsg dataset from the from the `survival` package. If you just want to try out the `customtab()` function, it can be downloaded [here](customtab.R).  
+
+OK, let's begin!
+
+```{r message = FALSE}
+library(survival) # only needed for the dataset in this example
+library(dplyr) # to modify the needed dataframe
+library(flextable)
+library(officer)
+library(forcats)
+```
+
+Load the dataset:  
+
+```{r}
+breast <- survival::gbsg
+```
+
+Running `?survival::gbsg` gives:
+
+> The gbsg data set contains patient records from a 1984 — 1989 trial conducted by the German Breast Cancer Study Group (GBSG) of 720 patients with node positive cancer...  
+
+Variable | Explanation
+-------- | ------------
+pid   | Patiend ID
+age | Age in years
+meno | Menopausal staus - 0 = premenopaus, 1 = postmenopaus
+size | tumor size
+grade | tumor grade
+nodes | number of positive lymph nodes
+pgr | progesterone receptors (fmol/L)
+er | estrogen receptors (fmol/L)
+hormon | hormone therapy - 0 = no, 1 = yes
+rfstime | recurrence free survival time in days
+status | 0 = alive without recurrence, 1 = recurrence or death
+
+Select variables included in Table 1. 
+```{r}
+variables <- names(breast)
+
+breast <- breast %>% select(all_of(variables)) %>% select(-pid, -rfstime, -status)
+
+```
+
+Rename the variables as they should appear in the table
+
+```{r}
+breast <- breast %>% rename(`Age, years (mean (SD))` = age, 
+                             Postmenopausal = meno, 
+                             `Tumor size, mm (mean (SD)` = size, 
+                             `Tumor grade` = grade, 
+                             `Positive lymph nodes, (n)` = nodes, 
+                             `Progesterone receptors, fmol/L (mean (SD))` = pgr, 
+                             `Estrogen receptors, fmol/L (mean (SD))` = er, 
+                             `Hormone treatment` = hormon)
+```
+
+Relabel hormon variable
+
+```{r}
+breast$`Hormone treatment` <- as_factor(breast$`Hormone treatment`) %>% fct_recode(Treated = "1", Placebo = "0")
+```
+
+
+
+
