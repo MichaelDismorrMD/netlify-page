@@ -125,9 +125,9 @@ library(broom)</code></pre>
 </table>
 <p>OK, so now that we understand the data, let’s start calculating crude incidence rates for death among the different treatment groups:</p>
 <pre class="r"><code># load the colon dataset
-data(colon, package = &quot;survival&quot;) 
-
-# Only keep records related to the death outcome
+data(colon, package = &quot;survival&quot;) </code></pre>
+<pre><code>## Warning in data(colon, package = &quot;survival&quot;): data set &#39;colon&#39; not found</code></pre>
+<pre class="r"><code># Only keep records related to the death outcome
 colon_death &lt;- colon %&gt;% dplyr::filter(etype == 2) 
 
 # Time is divided by 365.25/100 to get the time in days variable 
@@ -229,7 +229,7 @@ std_sum[[&quot;est.table&quot;]] %&gt;%
 <p>The numbers are identical to the ones obtained from the <code>age_sex_adjust()</code> function, which is logical since we did the same thing as the function does.<br />
 A few finishing notes. Here I included age as a quadratic term, and as an interaction with exposure. These are modeling decisions one will have to take, however the model could have been only a main effects model such as:<br />
 <br>
-<span class="math display">\[\log\lambda = \beta_0 + \beta_1\text{age} + \beta_2\text{sex}\]</span>
+<span class="math display">\[\log\lambda = \beta_0 + \beta_1\text{rxLev} + \beta_2\text{rxLev+5FU} + \beta_3\text{age} + \beta_4\text{sex}\]</span>
 <br>
 Regarding the interaction term, a good explanation was given in the Stata forum in <a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1431921-age-adjusted-rates-using-a-poisson-regression">this</a> post.</p>
 <p>For anyone who wants to read more, I recommend the course material from the PhD course <strong>Biostatistics III</strong> at Karolinska Institutet, available <a href="https://biostat3.net">here</a>.</p>

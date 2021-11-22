@@ -175,7 +175,7 @@ std_sum[["est.table"]] %>%
 The numbers are identical to the ones obtained from the `age_sex_adjust()` function, which is logical since we did the same thing as the function does.  
 A few finishing notes. Here I included age as a quadratic term, and as an interaction with exposure. These are modeling decisions one will have to take, however the model could have been only a main effects model such as:  
 <br>
-$$\log\lambda = \beta_0 + \beta_1\text{age} + \beta_2\text{sex}$$ 
+$$\log\lambda = \beta_0 + \beta_1\text{rxLev} + \beta_2\text{rxLev+5FU} + \beta_3\text{age} + \beta_4\text{sex}$$ 
 <br>
 Regarding the interaction term, a good explanation was given in the Stata forum in [this](https://www.statalist.org/forums/forum/general-stata-discussion/general/1431921-age-adjusted-rates-using-a-poisson-regression) post.  
 
