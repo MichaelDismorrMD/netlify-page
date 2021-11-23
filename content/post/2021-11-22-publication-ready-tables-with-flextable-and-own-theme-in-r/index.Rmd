@@ -170,7 +170,13 @@ save_as_docx(flextable_1, path = "flextab_1.docx",
 
 
 This will generate the following MS Word Table: 
-![Table 1 in MS Word](tableone.png)
+
+
+```{r echo = FALSE}
+blogdown::shortcode("figure", src = "tableone.png", alt = "MS Word Table 1")
+```
+
+
 
 The `customtab_defaults()` function simply sets some defaults for your tables, and can be changed to match the requirements of the journal you will be submitting to
 
