@@ -173,7 +173,7 @@ This will generate the following MS Word Table:
 
 
 ```{r echo = FALSE}
-blogdown::shortcode("figure", src = "tableone.png", alt = "MS Word Table 1")
+blogdown::shortcode("figure", src = "/img/customtab/tableone.png", alt = "MS Word Table 1")
 ```
 
 
