@@ -46,6 +46,7 @@ title: Michael Dismorr, MD
 
 I am a medical doctor and PhD Candidate at Karolinska Institutet in the cardiothoracic surgery research group. 
 
-Here I will primarily post guides and tutorials related to epidemiology in R. Main topics will include survival analysis with regression standardization and inverse probability of treatment weighting (IPTW). Feel free to reach out with comments or suggestions.
+Here I will primarily post guides and tutorials related to epidemiology in R. Main topics will include survival analysis with regression standardization and inverse probability of treatment weighting (IPTW). Feel free to reach out with comments or suggestions.  
+For more content like this, check out [R-bloggers](https://www.r-bloggers.com). 
 
 {{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
