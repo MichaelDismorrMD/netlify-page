@@ -1,12 +1,12 @@
 ---
 title: Publication-ready tables with flextable and own theme in R
-date: '2021-11-22'
-draft: true
+date: '2021-11-23'
+draft: false
 slug: publication-ready-tables-with-flextable-and-own-theme-in-r
 categories: []
-tags: [R, publication-ready, tableone, flextable]
+tags: [R, publication-ready, tableone, flextable, tables]
 subtitle: ''
-summary: "In this post, I will show you how I make my tables publication ready using a combination of the `flextable` package and a function I've written to customize them according to my default, or theme if you will. This will minimize the need to edit in word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the `tableone` package to show how my `customtab()` function can be used to export Table 1.  "
+summary: "In this post, I will show you how to make publication-ready using a combination of the [`flextable`](https://cran.r-project.org/package=flextable) package and a function I've written to customize them according to my default layout. This will minimize the need to edit in MS Word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the [`tableone`](https://cran.r-project.org/package=tableone) package to show how my `customtab()` function can be used to export Table 1. "
 authors: [admin]
 lastmod: '2021-11-22T22:05:20+01:00'
 featured: no
@@ -20,15 +20,19 @@ projects: []
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<p>In this post, I will show you how I make my tables publication ready using a combination of the <code>flextable</code> package and a function I’ve written to customize them according to my default, or theme if you will. This will minimize the need to edit in word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the <code>tableone</code> package to show how my <code>customtab()</code> function can be used to export Table 1.</p>
+<p>In this post, I will show you how to make publication-ready using a combination of the <a href="https://cran.r-project.org/package=flextable"><code>flextable</code></a> package and a function I’ve written to customize them according to my default layout. This will minimize the need to edit in MS Word, and copy and paste from Excel to Word when exporting tables from R. In this example, I will use the <a href="https://cran.r-project.org/package=tableone"><code>tableone</code></a> package to show how my <code>customtab()</code> function can be used to export Table 1.</p>
 <p>The <a href="https://cran.r-project.org/package=flextable"><code>flextable</code></a> package is a great package to generate word tables from R output. Together with the <a href="https://cran.r-project.org/package=officer"><code>officer</code></a> package from the same creator, it allows you to make most of the customization needed immediately in R, and thus let’s you skip this potentially annoying step in MS Word. The <a href="https://cran.r-project.org/package=tableone"><code>tableone</code></a> package is a great package for, you guessed it, generating Table 1s. It allows for p-value calculations, SMDs, and generally just the output that you need.</p>
-<p>For demonstration, I will use the gbsg dataset from the from the <code>survival</code> package. If you just want to try out the <code>customtab()</code> function, it can be downloaded <a href="customtab.R">here</a>.</p>
+<p>For demonstration, I will use the <code>gbsg</code> dataset from the from the <a href="https://cran.r-project.org/package=survival"><code>survival</code></a> package. If you just want to try out the <code>customtab()</code> function, it can be downloaded <a href="customtab.R">here</a>.</p>
 <p>OK, let’s begin!</p>
 <pre class="r"><code>library(survival) # only needed for the dataset in this example
 library(dplyr) # to modify the needed dataframe
+library(tibble) # for rownames_to_column() function
+library(stringr) # for str_squish()
 library(flextable)
 library(officer)
-library(forcats)</code></pre>
+library(forcats)
+library(tableone)
+source(&quot;customtab.R&quot;)</code></pre>
 <p>Load the dataset:</p>
 <pre class="r"><code>breast &lt;- survival::gbsg</code></pre>
 <p>Running <code>?survival::gbsg</code> gives:</p>
@@ -92,15 +96,134 @@ library(forcats)</code></pre>
 <p>Select variables included in Table 1.</p>
 <pre class="r"><code>variables &lt;- names(breast)
 
-breast &lt;- breast %&gt;% select(all_of(variables)) %&gt;% select(-pid, -rfstime, -status)</code></pre>
-<p>Rename the variables as they should appear in the table</p>
+breast &lt;- breast %&gt;% select(all_of(variables)) %&gt;% 
+  select(-pid, -rfstime, -status)
+
+breast &lt;- breast %&gt;% mutate(meno = as_factor(meno), 
+                            grade = as_factor(grade), 
+                            hormon = as_factor(hormon))</code></pre>
+<p>Rename the variables as they should appear in the table. While <code>tableone</code> can add explanation for you, I genereally prefer to type them out myself to keep track of what I actually want to get (e.g. is it mean or median?)</p>
 <pre class="r"><code>breast &lt;- breast %&gt;% rename(`Age, years (mean (SD))` = age, 
                              Postmenopausal = meno, 
                              `Tumor size, mm (mean (SD)` = size, 
                              `Tumor grade` = grade, 
                              `Positive lymph nodes, (n)` = nodes, 
-                             `Progesterone receptors, fmol/L (mean (SD))` = pgr, 
-                             `Estrogen receptors, fmol/L (mean (SD))` = er, 
+                             `Progesterone receptors, fmol/L (median [IQR])` = pgr, 
+                             `Estrogen receptors, fmol/L (median [IQR])` = er, 
                              `Hormone treatment` = hormon)</code></pre>
-<p>Relabel hormon variable</p>
-<pre class="r"><code>breast$`Hormone treatment` &lt;- as_factor(breast$`Hormone treatment`) %&gt;% fct_recode(Treated = &quot;1&quot;, Placebo = &quot;0&quot;)</code></pre>
+<p>Relabel hormon variable to more text friendly labels</p>
+<pre class="r"><code>breast$`Hormone treatment` &lt;- breast$`Hormone treatment` %&gt;% 
+  fct_recode(Treated = &quot;1&quot;, Placebo = &quot;0&quot;)</code></pre>
+<p>Select all variables and specify categorical variables for <code>tableone</code></p>
+<pre class="r"><code># All variables excluding the group variable
+myVars &lt;- breast %&gt;% select(-`Hormone treatment`) %&gt;% names() 
+
+# All categorical variables
+catVars &lt;-  breast %&gt;% select(where(is.factor)) %&gt;% 
+  dplyr::select(-`Hormone treatment`) %&gt;% names()</code></pre>
+<p>Create Table 1 object</p>
+<pre class="r"><code>tab1 &lt;- breast %&gt;% CreateTableOne(vars = myVars, 
+                   data = . , 
+                   factorVars = catVars, 
+                   strata = &quot;Hormone treatment&quot;, 
+                   addOverall = T, 
+                   test = T)</code></pre>
+<p>Print Table 1 object to control output, e.g. remove missing, print non-normal variables correctly etc.</p>
+<pre class="r"><code>tab1_word &lt;- print(tab1, 
+                   nonnormal = c(&quot;Progesterone receptors, fmol/L (median [IQR])&quot;, 
+                                 &quot;Estrogen receptors, fmol/L (median [IQR])&quot;),
+                   quote = F, 
+                   noSpaces = T, 
+                   # smd = T, 
+                   # missing = T, 
+                   test = F, 
+                   contDigits = 1, 
+                   printToggle = F,
+                   dropEqual = T, 
+                   explain = F)</code></pre>
+<p><code>custom_tab()</code> needs a dataframe as argument, so first we convert the tableone object</p>
+<pre class="r"><code># Convert to dataframe
+tab1_df &lt;- as.data.frame(tab1_word) %&gt;% rownames_to_column(var = &quot;Variable&quot;)</code></pre>
+<p>Use <code>custom_tab()</code> to export the MS Word table.<br />
+<strong>Important:</strong> run <code>customtab_defaults()</code> before using the <code>custom_tab()</code> function to get correct formatting</p>
+<pre class="r"><code># Rename first variable from n to No.
+tab1_df$Variable[1] &lt;- &quot;No.&quot;
+
+# Set Table header
+header &lt;- str_squish(str_remove(&quot;Table 1. Baseline characteristics of 686 
+                                patients enrolled in the German Breast Cancer Study Group 
+                                between 1984 and 1989&quot;, &quot;\n&quot;))
+
+# Set Table footer
+footer &lt;- str_squish(str_remove(&quot;Numbers are No. (%) unless otherwise noted. 
+                                SD = standard deviation, fmol/L = femtomole per liter, 
+                                IQR = interquartile range&quot;, &quot;\n&quot;))
+
+# Set custom_tab() defaults
+customtab_defaults()
+
+# Create the flextable object
+flextable_1 &lt;- custom_tab(tab1_df, header, footer)</code></pre>
+<p>Save the resulting table as .docx</p>
+<pre class="r"><code># Save as word .docx
+save_as_docx(flextable_1, path = &quot;flextab_1.docx&quot;, 
+             pr_section = 
+               prop_section(page_size = page_size(orient = &quot;portrait&quot;), 
+                                       type = &quot;continuous&quot;))</code></pre>
+<p>This will generate the following MS Word Table:
+<img src="tableone.png" alt="Table 1 in MS Word" /></p>
+<p>The <code>customtab_defaults()</code> function simply sets some defaults for your tables, and can be changed to match the requirements of the journal you will be submitting to</p>
+<pre class="r"><code>customtab_defaults &lt;- function(){
+  set_flextable_defaults(font.family = &quot;Calibri&quot;, 
+  font.size = 10, 
+  border.color = &quot;black&quot;)
+}</code></pre>
+<p>The <code>custom_tab()</code> function looks like this</p>
+<pre class="r"><code>######### Create default BioAVR table from dataframe
+#
+# Dependencies : dplyr, flextable, officer
+#      
+custom_tab &lt;- function(df, header, footer){
+  flextable(df) %&gt;% 
+    add_header_lines(header) %&gt;% 
+    add_footer_lines(footer) %&gt;% 
+    bold(i = 1, part = &quot;header&quot;) %&gt;% 
+    hline_top(part = &quot;header&quot;, 
+              border = fp_border(color = &quot;red&quot;, 
+                                 width = 3, 
+                                 style = &quot;solid&quot;)) %&gt;% 
+    hline(i = 1, 
+          part = &quot;header&quot;, 
+          border = fp_border(color = &quot;black&quot;, 
+                             width = 0.25, 
+                             style = &quot;solid&quot;)) %&gt;% 
+    hline_top(part = &quot;body&quot;, 
+              border = fp_border(color = &quot;black&quot;, 
+                                 width = 0.25, 
+                                 style = &quot;solid&quot;)) %&gt;% 
+    hline_bottom(part = &quot;body&quot;, 
+                 border = fp_border(color = &quot;black&quot;, 
+                                    width = 0.25, 
+                                    style = &quot;solid&quot;)) %&gt;% 
+    hline_bottom(part = &quot;footer&quot;, 
+                 border = fp_border(color = &quot;black&quot;, 
+                                    width = 0.25, 
+                                    style = &quot;solid&quot;)) %&gt;% 
+    border_inner_h(part = &quot;body&quot;, 
+                   border = fp_border(color = &quot;black&quot;, 
+                                      width = 0.25, 
+                                      style = &quot;dotted&quot;)) %&gt;% 
+    autofit(part = &quot;body&quot;) %&gt;% 
+    bg(part = &quot;body&quot;, bg = &quot;#f5f5f5&quot;) %&gt;% 
+    align(part = &quot;all&quot;, align = &quot;center&quot;) %&gt;% 
+    align(j = 1, part = &quot;all&quot;, align = &quot;left&quot;)
+}</code></pre>
+<p>What it does is:<br />
+1. Add header and footer<br />
+2. Make header bold<br />
+3. Adds red and black border for header<br />
+4. Adds black borders for footer<br />
+5. Adds dotted borders for body content<br />
+6. Adds gray background to body</p>
+<p>This is a standard design I go for in my tables, but it can of course be changed to your own or journal specific requirements.
+While <code>flextable</code> allows output to other formats as well, I generally only use this for MS Word output. The reason is that I’ve noticed problems with the borders when outputting to pdf or image formats.</p>
