@@ -176,10 +176,6 @@ This will generate the following MS Word Table:
 blogdown::shortcode("figure", src = "tableone.png", alt = "MS Word Table 1")
 ```
 
-```{r echo = FALSE}
-knitr::include_graphics("tableone.png")
-```
-
 
 The `customtab_defaults()` function simply sets some defaults for your tables, and can be changed to match the requirements of the journal you will be submitting to
 

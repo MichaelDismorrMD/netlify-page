@@ -172,7 +172,6 @@ save_as_docx(flextable_1, path = &quot;flextab_1.docx&quot;,
                                        type = &quot;continuous&quot;))</code></pre>
 <p>This will generate the following MS Word Table:</p>
 <p>{{% figure src="tableone.png" alt="MS Word Table 1" %}}</p>
-<p><img src="tableone.png" width="361" /></p>
 <p>The <code>customtab_defaults()</code> function simply sets some defaults for your tables, and can be changed to match the requirements of the journal you will be submitting to</p>
 <pre class="r"><code>customtab_defaults &lt;- function(){
   set_flextable_defaults(font.family = &quot;Calibri&quot;, 
