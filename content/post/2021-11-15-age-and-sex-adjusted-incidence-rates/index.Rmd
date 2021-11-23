@@ -4,7 +4,7 @@ author: Michael Dismorr, MD
 date: '2021-11-15'
 slug: age-and-sex-adjusted-incidence-rates
 categories: 
-  - 
+  - R
 tags: 
   - incidence-rate
   - poisson-regression
