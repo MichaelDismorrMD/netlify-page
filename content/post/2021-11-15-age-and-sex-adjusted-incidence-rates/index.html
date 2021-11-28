@@ -28,7 +28,7 @@ projects: []
 
 
 <p>In this first post I’m going to present a way of obtaining age- and sex-adjusted incidence rates using poisson regression in R. This will be similar to what is done in Stata as described <a href="https://www.statalist.org/forums/forum/general-stata-discussion/general/1431921-age-adjusted-rates-using-a-poisson-regression">here</a>.</p>
-<p>I’ve written a R function that’s available for download <a href="age_sex_adjust.R">here.</a> The script can be sourced ( <code>source("age-sex-adjust.R"</code> ) and then the function <code>age_sex_adjust()</code> can be used as is. The code will also be described step by step below.</p>
+<p>I’ve written a R function that’s available for download <a href="age_sex_adjust.R">here.</a> The script can be sourced ( <code>source("age_sex_adjust.R")</code> ) and then the function <code>age_sex_adjust()</code> can be used as is. The code will also be described step by step below.</p>
 <hr />
 <p>There are, as usual, several ways to calculate adjusted incidence rates in R. I’ve chosen to use the package <a href="https://cran.r-project.org/package=stdReg">stdReg</a> by <a href="https://www.meb.ki.se/sites/arvsjo/">Arvid Sjölander</a> because it has a lot of nice features and useful implications in causal inference. Specifically, we will use the function <code>stdGlm()</code> from stdReg to generate the the adjusted incidence rates.</p>
 <p>But first we start off with a little bit of background on what an incidence rate is. It is simply a measure of a number of occurrences (a count) in a population over the total population time. For example, in a population of 10 people, each followed 1 year, there was one case of death. In that population, the incidence rate of death would 1 per 10 person years. In observational data, we often have larger cohorts with varying follow-up time and censoring. The calculation is of course the same, using the formula below:<br />
@@ -193,7 +193,7 @@ as_tibble(lev_5fu) %&gt;% summarise(Treatment = &quot;Lev+5FU&quot;,
 <div id="age--and-sex-adjusted-incidence-rates-using-poisson-regression" class="section level3">
 <h3>Age- and sex-adjusted incidence rates using poisson regression</h3>
 <p>First, we’ll do it using my <code>age_sex_adjust()</code> function</p>
-<pre class="r"><code>source(&quot;age-sex-adjust.R&quot;)
+<pre class="r"><code>source(&quot;age_sex_adjust.R&quot;)
 # Usage: age_sex_adjust(data, group, age, sex, event, time)
 
 age_sex_adjust(colon_death, rx, age, sex, status, time)</code></pre>

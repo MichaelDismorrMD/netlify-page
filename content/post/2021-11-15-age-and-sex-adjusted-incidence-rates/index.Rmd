@@ -25,7 +25,7 @@ projects: []
 ---
 In this first post I'm going to present a way of obtaining age- and sex-adjusted incidence rates using poisson regression in R. This will be similar to what is done in Stata as described [here](https://www.statalist.org/forums/forum/general-stata-discussion/general/1431921-age-adjusted-rates-using-a-poisson-regression).
 
-I've written a R function that's available for download [here.](age_sex_adjust.R) The script can be sourced ( `source("age-sex-adjust.R"` ) and then the function `age_sex_adjust()` can be used as is. The code will also be described step by step below.
+I've written a R function that's available for download [here.](age_sex_adjust.R) The script can be sourced ( `source("age_sex_adjust.R")` ) and then the function `age_sex_adjust()` can be used as is. The code will also be described step by step below.
 
 ***
 
@@ -145,7 +145,7 @@ A poisson model is actually modeling $\log\text{incidence rates (ratios)}$ when 
 First, we'll do it using my `age_sex_adjust()` function
 
 ```{r}
-source("age-sex-adjust.R")
+source("age_sex_adjust.R")
 # Usage: age_sex_adjust(data, group, age, sex, event, time)
 
 age_sex_adjust(colon_death, rx, age, sex, status, time)
