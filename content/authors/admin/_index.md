@@ -19,7 +19,7 @@ interests:
 - R-programming
 organizations:
 - name: Karolinska Institutet
-  url: https://www.ki.se/
+  url: https://ki.se/
 role: Medical doctor, PhD Candidate in cardiothoracic surgery
 social:
 - icon: university
