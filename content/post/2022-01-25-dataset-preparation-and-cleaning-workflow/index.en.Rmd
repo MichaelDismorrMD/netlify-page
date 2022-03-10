@@ -1,0 +1,72 @@
+---
+title: Dataset preparation and cleaning workflow
+date: '2022-01-25'
+draft: true
+slug: dataset-preparation-and-cleaning-workflow
+categories: [R]
+tags: [R, workflow, tips-n-tricks, data-cleaning, tidyverse]
+subtitle: ''
+summary: "Welcome back! In this post, I would like to show a short example of a standardized workflow that I use (work in progress) when preparing my data for analysis. I will show code examples I use to ease the work in terms of identifying what needs to be fixed. While this is not a major problem for datasets with few columns, it can be quite cumbersome if you have a dataset with say, 150 columns. "
+authors: [admin]
+lastmod: '2022-01-25T11:03:19+01:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+Welcome back! In this post, I would like to show a short example of a standardized workflow that I use (work in progress) when preparing my data for analysis. I will show code examples I use to ease the work in terms of identifying what needs to be fixed. While this is not a major problem for datasets with few columns, it can be quite cumbersome if you have a dataset with say, 150 columns. 
+
+First, we'll load some commonly used packages
+
+```{r message=FALSE}
+library(dplyr)
+library(lubridate) # Used for handling dates, and the lakers dataset in our example
+library(magrittr)  # Used for the %<>% pipe which I've come to like
+library(forcats)   # For dealing with categorical variables
+library(tidyr)     # For pivot_longer() and related functions
+library(purrr)
+```
+
+Step two, is of course to load the data. 
+```{r}
+lakers <- lubridate::lakers
+```
+Normally, we would load the dataset either from an R file using `load()`, or from an excel sheet, SAS file, .csv or similar. For these formats, I tend to use the `readxl::read_excel()`, `haven::read_sas()`, `readr::read_csv()` (or the applicable `read_delim()`) functions. 
+A lot can be said about reading data, and each of these functions has certain tips and tricks, but I'll save that for a later post.
+
+To get a feel for the dataset, I usually start with the `glimpse()` function
+```{r}
+glimpse(lakers)
+```
+
+This gives us the dimensions of the dataset (34,624 rows, 13 columns), the column names, and the type of each columns (in this case `int` and `chr`). Since we only have 13 columns here, we can easily get an overview and decide what we need to change, but if we would have had 150 columns it would have been harder to overview.
+
+In that case, I use this code snippet to output the columns according to type
+```{r}
+lakers %>% map_dfr(~ class(.x)) %>% # run class() on each column
+    pivot_longer(everything()) %>%  # get output in two columns
+    arrange(value) %>%              # arrange according to type
+    print(n = Inf)                  # print all lines
+```
+So we have two date-time columns that needs to be transformed, and many character columns that should be factors. My next step is then to change all columns to appropriate types using one `mutate()` call. 
+
+```{r}
+lakers %<>% mutate(opponent = as_factor(opponent), 
+                   game_type = as_factor(game_type), 
+                   time = hm(time), 
+                   etype = as_factor(etype), 
+                   team = as_factor(team), 
+                   player = as_factor(player), 
+                   result = as_factor(result), 
+                   type = as_factor(type), 
+                   date = ymd(date), 
+                   period = as_factor(period), 
+                   points = as_factor(points))
+```
+
+```{r}
+glimpse(lakers)
+```
+
